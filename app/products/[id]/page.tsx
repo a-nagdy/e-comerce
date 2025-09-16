@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { addToUserCart, guestCart } from "@/lib/cart";
-import { getSiteSettings } from "@/lib/settings";
+import { getContainerClass, useSiteSettings } from "@/lib/settings-client";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import {
@@ -99,7 +99,7 @@ const productData = {
   ],
 };
 
-export default async function ProductDetailPage({
+export default function ProductDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -110,6 +110,7 @@ export default async function ProductDetailPage({
     Record<string, string>
   >({});
   const [quantity, setQuantity] = useState(1);
+  const settings = useSiteSettings();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -157,18 +158,7 @@ export default async function ProductDetailPage({
     // TODO: Implement wishlist functionality
   };
 
-  const settings = await getSiteSettings();
-  const getContainerClass = () => {
-    switch (settings.containerWidth) {
-      case "wide":
-        return "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8";
-      case "full":
-        return "w-full px-4 sm:px-6 lg:px-8";
-      default: // 'standard'
-        return "container";
-    }
-  };
-  const containerClass = getContainerClass();
+  const containerClass = getContainerClass(settings.containerWidth);
   return (
     <div className="min-h-screen flex flex-col">
       <Header />

@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { getSiteSettings } from "@/lib/settings";
+import { getContainerClass, useSiteSettings } from "@/lib/settings-client";
 import { Filter, Search, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -68,7 +68,7 @@ const brands = [
   { id: "ecowear", name: "EcoWear", count: 67 },
 ];
 
-export default async function SearchPage() {
+export default function SearchPage() {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [sortBy, setSortBy] = useState("relevance");
@@ -76,6 +76,7 @@ export default async function SearchPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const settings = useSiteSettings();
 
   useEffect(() => {
     setQuery(searchParams.get("q") || "");
@@ -110,18 +111,7 @@ export default async function SearchPage() {
     selectedBrands.length +
     (priceRange[0] > 0 || priceRange[1] < 1000 ? 1 : 0);
 
-  const settings = await getSiteSettings();
-  const getContainerClass = () => {
-    switch (settings.containerWidth) {
-      case "wide":
-        return "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8";
-      case "full":
-        return "w-full px-4 sm:px-6 lg:px-8";
-      default: // 'standard'
-        return "container";
-    }
-  };
-  const containerClass = getContainerClass();
+  const containerClass = getContainerClass(settings.containerWidth);
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-1">

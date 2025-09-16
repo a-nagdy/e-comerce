@@ -145,6 +145,48 @@ export async function getCartCount(userId?: string): Promise<number> {
   return data?.reduce((sum, item) => sum + item.quantity, 0) || 0
 }
 
+export async function getUserCart(userId: string): Promise<CartItem[]> {
+  const supabase = createClient()
+
+  const { data: cartItems, error } = await supabase
+    .from("cart_items")
+    .select(`
+      id,
+      quantity,
+      product_id,
+      products (
+        id,
+        name,
+        price,
+        images,
+        vendors (
+          business_name
+        )
+      )
+    `)
+    .eq("user_id", userId)
+
+  if (error) {
+    console.error("Error fetching cart:", error)
+    return []
+  }
+
+  if (!cartItems) {
+    return []
+  }
+
+  return cartItems.map((item: any) => ({
+    id: item.id,
+    productId: item.product_id,
+    name: item.products?.name || "",
+    price: item.products?.price || 0,
+    quantity: item.quantity,
+    image: item.products?.images?.[0] || "/placeholder.svg",
+    vendor: item.products?.vendors?.business_name || "",
+    inStock: true,
+  }))
+}
+
 // Server-side cart functions (to be used in server components/API routes)
 // export async function getUserCart(userId: string) {
 //   // This function should be moved to a separate server-side cart utility

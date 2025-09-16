@@ -9,9 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
-import { mergeGuestCartWithUser, type CartItem } from "@/lib/cart";
-import { getUserCart } from "@/lib/cart-server";
-import { getSiteSettings } from "@/lib/settings";
+import { getUserCart, mergeGuestCartWithUser, type CartItem } from "@/lib/cart";
+import { getContainerClass, useSiteSettings } from "@/lib/settings-client";
 import { createClient } from "@/lib/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import {
@@ -48,7 +47,7 @@ const shippingOptions = [
   },
 ];
 
-export default async function CheckoutPage() {
+export default function CheckoutPage() {
   const router = useRouter();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -59,6 +58,7 @@ export default async function CheckoutPage() {
   const [sameAsShipping, setSameAsShipping] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const supabase = createClient();
+  const settings = useSiteSettings();
 
   const [shippingAddress, setShippingAddress] = useState({
     firstName: "",
@@ -251,20 +251,7 @@ export default async function CheckoutPage() {
     { number: 3, title: "Review", icon: Lock },
   ];
 
-  const settings = await getSiteSettings();
-
-  // Dynamic container class based on settings
-  const getContainerClass = () => {
-    switch (settings.containerWidth) {
-      case "wide":
-        return "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8";
-      case "full":
-        return "w-full px-4 sm:px-6 lg:px-8";
-      default: // 'standard'
-        return "container";
-    }
-  };
-  const containerClass = getContainerClass();
+  const containerClass = getContainerClass(settings.containerWidth);
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-1 bg-gray-50">

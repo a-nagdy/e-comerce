@@ -1,43 +1,32 @@
-"use client"
+"use client";
 
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { CheckCircle, Package, Truck, Mail, Download } from "lucide-react"
-import Link from "next/link"
-import { useState } from "react"
-import { getSiteSettings } from "@/lib/settings"
+import { Footer } from "@/components/layout/footer";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getContainerClass, useSiteSettings } from "@/lib/settings-client";
+import { CheckCircle, Download, Mail, Package, Truck } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
-export default async function CheckoutSuccessPage() {
-  const [orderNumber] = useState(() => Math.random().toString(36).substr(2, 9).toUpperCase())
+export default function CheckoutSuccessPage() {
+  const [orderNumber] = useState(() =>
+    Math.random().toString(36).substr(2, 9).toUpperCase()
+  );
   const [estimatedDelivery] = useState(() => {
-    const date = new Date()
-    date.setDate(date.getDate() + 7)
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
     return date.toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
-    })
-  })
-
-  const settings = await getSiteSettings();
-  const getContainerClass = () => {
-    switch (settings.containerWidth) {
-      case "wide":
-        return "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8";
-      case "full":
-        return "w-full px-4 sm:px-6 lg:px-8";
-      default: // 'standard'
-        return "container";
-    }
-  };
-  const containerClass = getContainerClass();
+    });
+  });
+  const settings = useSiteSettings();
+  const containerClass = getContainerClass(settings.containerWidth);
   return (
     <div className="min-h-screen flex flex-col">
-
       <main className="flex-1 bg-gray-50">
         <div className={containerClass}>
           <div className="max-w-2xl mx-auto text-center space-y-8">
@@ -50,9 +39,12 @@ export default async function CheckoutSuccessPage() {
 
             {/* Success Message */}
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-gray-900">Order Confirmed!</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Order Confirmed!
+              </h1>
               <p className="text-gray-600">
-                Thank you for your purchase. Your order has been successfully placed and is being processed.
+                Thank you for your purchase. Your order has been successfully
+                placed and is being processed.
               </p>
             </div>
 
@@ -93,7 +85,8 @@ export default async function CheckoutSuccessPage() {
                     <div>
                       <h3 className="font-medium">Order Confirmation Email</h3>
                       <p className="text-sm text-gray-600">
-                        You'll receive an email confirmation with your order details shortly.
+                        You'll receive an email confirmation with your order
+                        details shortly.
                       </p>
                     </div>
                   </div>
@@ -105,7 +98,8 @@ export default async function CheckoutSuccessPage() {
                     <div>
                       <h3 className="font-medium">Order Processing</h3>
                       <p className="text-sm text-gray-600">
-                        Our vendors will prepare your items for shipment within 1-2 business days.
+                        Our vendors will prepare your items for shipment within
+                        1-2 business days.
                       </p>
                     </div>
                   </div>
@@ -117,7 +111,8 @@ export default async function CheckoutSuccessPage() {
                     <div>
                       <h3 className="font-medium">Shipping Updates</h3>
                       <p className="text-sm text-gray-600">
-                        Track your package with real-time updates via email and SMS.
+                        Track your package with real-time updates via email and
+                        SMS.
                       </p>
                     </div>
                   </div>
@@ -154,5 +149,5 @@ export default async function CheckoutSuccessPage() {
 
       <Footer />
     </div>
-  )
+  );
 }
